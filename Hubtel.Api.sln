@@ -2,6 +2,8 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hubtel.Api", "Hubtel.Api\Hubtel.Api.csproj", "{97C1290D-3DA4-4C9F-9F8B-9D2EB05980E4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hubtel.Api.Tests", "Hubtel.Api.Tests\Hubtel.Api.Tests.csproj", "{2B84E23E-33F9-4BE5-9CA8-FFA6F2FEA62A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +14,9 @@ Global
 		{97C1290D-3DA4-4C9F-9F8B-9D2EB05980E4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{97C1290D-3DA4-4C9F-9F8B-9D2EB05980E4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{97C1290D-3DA4-4C9F-9F8B-9D2EB05980E4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2B84E23E-33F9-4BE5-9CA8-FFA6F2FEA62A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2B84E23E-33F9-4BE5-9CA8-FFA6F2FEA62A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2B84E23E-33F9-4BE5-9CA8-FFA6F2FEA62A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2B84E23E-33F9-4BE5-9CA8-FFA6F2FEA62A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

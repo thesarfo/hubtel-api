@@ -1,3 +1,4 @@
+using System.Reflection;
 using Hubtel.Api.Contracts;
 using Hubtel.Api.Data;
 using Hubtel.Api.Services;
@@ -16,6 +17,12 @@ builder.Services.AddControllers(options =>
         options.SuppressModelStateInvalidFilter = true; 
     });
 builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen(c =>
+{
+    var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+    c.IncludeXmlComments(xmlPath);
+});
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddSqlite<WalletContext>(connString);

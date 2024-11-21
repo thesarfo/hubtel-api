@@ -10,6 +10,11 @@ namespace Hubtel.Api.Controllers;
 public class WalletController(IWalletService walletService, IWalletValidationService walletValidationService)
     : ControllerBase
 {
+    /// <summary>
+    /// Adds a new wallet.
+    /// </summary>
+    /// <param name="walletDto"></param>
+    /// <returns></returns>
     [HttpPost]
     public async Task<IActionResult> AddWalletAsync([FromBody] WalletDto walletDto)
     {
@@ -28,7 +33,8 @@ public class WalletController(IWalletService walletService, IWalletValidationSer
         {
 
             var result = await walletService.AddWalletAsync(walletDto);
-            return Ok(ApiResponse<WalletResponseDto>.Success(result, MessageConstants.WalletAddedSuccessfully));
+            return CreatedAtAction(nameof(GetWalletById), new { id = result.Id }, 
+                ApiResponse<WalletResponseDto>.Success(result, MessageConstants.WalletAddedSuccessfully));
         }
         catch (ArgumentException ex)
         {
@@ -37,6 +43,10 @@ public class WalletController(IWalletService walletService, IWalletValidationSer
         }
     }
 
+    /// <summary>
+    /// Gets all wallets.
+    /// </summary>
+    /// <returns></returns>
     [HttpGet("{id}")]
     public async Task<IActionResult> GetWalletById(Guid id)
     {
@@ -54,7 +64,11 @@ public class WalletController(IWalletService walletService, IWalletValidationSer
         };
     }
 
-    
+    /// <summary>
+    /// Gets a single wallet by id.
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
     [HttpGet]
     public async Task<IActionResult> GetWalletsAsync([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
     {
@@ -68,6 +82,11 @@ public class WalletController(IWalletService walletService, IWalletValidationSer
     }
 
     
+    /// <summary>
+    /// Removes a wallet by id.
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteWallet(Guid id)
     {

@@ -53,7 +53,9 @@ public class WalletService(WalletContext context, ILogger<WalletService> logger,
     
     public async Task<ApiResponse<PaginationInfo<WalletResponseDto>>> GetWalletsAsync(int pageNumber = 1, int pageSize = 10)
     {
-        var query = _context.Wallets.Select(w => WalletResponseDto.ToWalletDto(w));
+        var query = _context.Wallets
+            .OrderBy(w => w.CreatedAt) 
+            .Select(w => WalletResponseDto.ToWalletDto(w));
 
         var pagedResponse = await PagedList<WalletResponseDto>.ToPageableAsync(query, pageNumber, pageSize);
 

@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Hubtel.Api.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/v1/[controller]")]
 public class WalletController(IWalletService walletService, IWalletValidationService walletValidationService)
     : ControllerBase
 {
@@ -16,9 +16,9 @@ public class WalletController(IWalletService walletService, IWalletValidationSer
         if (walletDto is null) return BadRequest(ModelState);
         if (!await walletValidationService.IsAccountNumberUniqueAsync(walletDto.AccountNumber))
         {
+            
             return BadRequest(ApiResponse<object>.Failure("The account number is already in use"));
         }
-
         if (!await walletValidationService.CanAddMoreWalletsAsync(walletDto.Owner))
         {
             return BadRequest(ApiResponse<object>.Failure("The owner has reached the maximum number of wallets (5)"));
@@ -33,7 +33,7 @@ public class WalletController(IWalletService walletService, IWalletValidationSer
         catch (ArgumentException ex)
         {
 
-            return BadRequest(ex.Message);
+            return BadRequest(ApiResponse<object>.Failure(ex.Message));
         }
     }
 
@@ -72,11 +72,7 @@ public class WalletController(IWalletService walletService, IWalletValidationSer
     public async Task<IActionResult> DeleteWallet(Guid id)
     {
         if (id == Guid.Empty) return BadRequest(ApiResponse<object>.Failure("Invalid wallet id provided"));
-
-        var wallet = await walletService.GetWalletAsync(id);
-
-        if (wallet is null) return NotFound(ApiResponse<object>.Failure("Wallet not found"));
-
+        
         await walletService.RemoveWalletAsync(id);
 
         return NoContent();

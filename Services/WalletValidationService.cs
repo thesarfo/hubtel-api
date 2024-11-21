@@ -10,9 +10,13 @@ public class WalletValidationService(WalletContext context) : IWalletValidationS
 {
     public async Task<bool> CanAddMoreWalletsAsync(string phoneNumber)
     {
-        var walletCount = await context.Wallets.CountAsync(w => w.Owner == phoneNumber);
-        return walletCount < 5;
+        var walletExists = await context.Wallets
+            .Where(w => w.Owner == phoneNumber)
+            .Take(5) 
+            .CountAsync(); 
+        return walletExists < 5;
     }
+
 
     public async Task<bool> IsAccountNumberUniqueAsync(string accountNumber)
     {
@@ -25,37 +29,52 @@ public class WalletValidationService(WalletContext context) : IWalletValidationS
         {
             throw new ArgumentException("Invalid account scheme provided.");
         }
+
+        ValidateWalletType(wallet);
+
         if (wallet.Type == WalletType.card)
         {
-            if (!IsValidCardNumber(wallet.AccountNumber, wallet.AccountScheme))
-            {
-                throw new ArgumentException("Invalid card number provided for the specified Account Scheme.");
-            }
-            wallet.AccountNumber = wallet.AccountNumber.Substring(0, 6);
+            ValidateCardNumber(wallet);
         }
+    }
 
+    private void ValidateWalletType(Wallet wallet)
+    {
         if (wallet.Type != WalletType.momo && wallet.Type != WalletType.card)
         {
             throw new ArgumentException("Invalid wallet type. Only 'momo' or 'card' are accepted.");
         }
-
     }
+
+    private void ValidateCardNumber(Wallet wallet)
+    {
+        if (!IsValidCardNumber(wallet.AccountNumber, wallet.AccountScheme))
+        {
+            throw new ArgumentException("Invalid card number provided for the specified Account Scheme.");
+        }
+
+        wallet.AccountNumber = wallet.AccountNumber.Substring(0, 6);
+    }
+
     
 
     internal bool IsValidCardNumber(string cardNumber, AccountScheme accountScheme)
     {
         cardNumber = new string(cardNumber.Where(char.IsDigit).ToArray());
 
+        if (cardNumber.Length != 16)
+        {
+            return false;
+        }
+
         return accountScheme switch
         {
-            AccountScheme.visa => cardNumber.StartsWith("4") && cardNumber.Length == 16,
-            AccountScheme.mastercard => (cardNumber.StartsWith("51") || cardNumber.StartsWith("52") ||
-                                               cardNumber.StartsWith("53") || cardNumber.StartsWith("54") ||
-                                               cardNumber.StartsWith("55") ||
-                                               (cardNumber.CompareTo("2221000000000000") >= 0 &&
-                                                cardNumber.CompareTo("2720999999999999") <= 0)) &&
-                                              cardNumber.Length == 16,
-            _ => false,
+            AccountScheme.visa => cardNumber.StartsWith("4"),
+            AccountScheme.mastercard => cardNumber.StartsWith("5") || 
+                                        (cardNumber.CompareTo("2221000000000000") >= 0 &&
+                                         cardNumber.CompareTo("2720999999999999") <= 0),
+            _ => false
         };
     }
+
 }

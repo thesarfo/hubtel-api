@@ -4,37 +4,23 @@ namespace Hubtel.Api.Data.Response;
 public class ApiResponse<T>
 {
     public T? Content { get; set; }
-    public ResponseMessage Message { get; set; } = new();
+    public string Message { get; set; } = string.Empty;
 
-    public static ApiResponse<T> Success(T content, string? message = null)
+    public static ApiResponse<T> Success(T content, string message)
     {
         return new ApiResponse<T>
         {
             Content = content,
-            Message = new ResponseMessage
-            {
-                Type = "Success",
-                Text = message ?? "Operation completed successfully."
-            }
+            Message = message
         };
     }
 
-    public static ApiResponse<T> Failure(string errorMessage, string? details = null)
+    public static ApiResponse<T> Failure(string errorMessage)
     {
         return new ApiResponse<T>
         {
-            Content = default, 
-            Message = new ResponseMessage
-            {
-                Type = "Error",
-                Text = errorMessage
-            }
+            Content = default,  
+            Message = errorMessage  
         };
     }
-}
-
-public class ResponseMessage
-{
-    public string Type { get; set; } = "Info";
-    public string Text { get; set; } = string.Empty;
 }

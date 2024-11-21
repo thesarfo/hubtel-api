@@ -29,8 +29,7 @@ public class GlobalExceptionMiddleware(RequestDelegate next, ILogger<GlobalExcep
         };
 
         var errorResponse = ApiResponse<object>.Failure(
-            errorMessage: exception.Message,
-            details: exception.InnerException?.Message
+            errorMessage: exception.Message
         );
 
         var json = JsonSerializer.Serialize(errorResponse);

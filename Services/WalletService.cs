@@ -1,13 +1,11 @@
-using System.Globalization;
 using Hubtel.Api.Contracts;
 using Hubtel.Api.Data;
 using Hubtel.Api.Data.Enums;
 using Hubtel.Api.Data.Request;
+using Hubtel.Api.Data.Response;
 using Hubtel.Api.Entities;
 using Hubtel.Api.Utils;
-using Hubtel.Api.Utils.Exceptions;
 using Hubtel.Api.Utils.Pagination;
-using HubtelWallets.API.DTOs;
 
 namespace Hubtel.Api.Services;
 
@@ -20,10 +18,6 @@ public class WalletService(WalletContext context, ILogger<WalletService> logger,
 
     public async Task<WalletResponseDto> AddWalletAsync(WalletDto walletDto)
     {
-        // Debug logging
-        Console.WriteLine($"Received AccountScheme: {walletDto.AccountScheme}");
-        Console.WriteLine($"Available AccountScheme values: {string.Join(", ", Enum.GetNames(typeof(AccountScheme)))}");
-
         ArgumentNullException.ThrowIfNull(walletDto);
 
         var wallet = new Wallet
@@ -49,27 +43,30 @@ public class WalletService(WalletContext context, ILogger<WalletService> logger,
 
     public async Task<WalletResponseDto> GetWalletAsync(Guid id)
     {
-        var wallet = await _context.Wallets.FindAsync(id) ??
-                     throw new Exception($"Wallet not found");
-        _logger.LogWarning("Wallet not found: {WalletId}", id);
+        var wallet = await _context.Wallets.FindAsync(id);
 
-        return WalletResponseDto.ToWalletDto(wallet);
-        
+        if (wallet != null) return WalletResponseDto.ToWalletDto(wallet);
+        _logger.LogWarning("Wallet not found: {WalletId}", id);
+        return null;
+
     }
     
-    public async Task<PaginationInfo<WalletResponseDto>> GetWalletsAsync()
+    public async Task<ApiResponse<PaginationInfo<WalletResponseDto>>> GetWalletsAsync(int pageNumber = 1, int pageSize = 10)
     {
         var query = _context.Wallets.Select(w => WalletResponseDto.ToWalletDto(w));
 
-        var pagedResponse = await PagedList<WalletResponseDto>.ToPageableAsync(query, 1, 10);
+        var pagedResponse = await PagedList<WalletResponseDto>.ToPageableAsync(query, pageNumber, pageSize);
 
-        return new PaginationInfo<WalletResponseDto>
-        {
-            Data = pagedResponse,
-            Meta = pagedResponse.Meta
-        };
-
+        return ApiResponse<PaginationInfo<WalletResponseDto>>.Success(
+            new PaginationInfo<WalletResponseDto>
+            {
+                Data = pagedResponse,
+                Meta = pagedResponse.Meta
+            },
+            "Wallets retrieved successfully"
+        );
     }
+
     
     public async Task<bool> RemoveWalletAsync(Guid id)
     {

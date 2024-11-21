@@ -1,6 +1,6 @@
 using Hubtel.Api.Entities;
 
-namespace HubtelWallets.API.DTOs;
+namespace Hubtel.Api.Data.Response;
 
 public record WalletResponseDto(Guid Id, string Name, string AccountNumber, string AccountScheme, string Type, string Owner, DateTime CreatedAt)
 {

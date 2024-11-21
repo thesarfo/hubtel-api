@@ -49,5 +49,12 @@ public class WalletController(IWalletService walletService, IWalletValidationSer
             _ => Ok(wallet)
         };
     }
+    
+    [HttpGet]
+    public async Task<IActionResult> GetWalletsAsync()
+    {
+        var result = await walletService.GetWalletsAsync();
+        return Ok(result);
+    }
 
 }

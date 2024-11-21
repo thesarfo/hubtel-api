@@ -6,6 +6,7 @@ using Hubtel.Api.Data.Request;
 using Hubtel.Api.Entities;
 using Hubtel.Api.Utils;
 using Hubtel.Api.Utils.Exceptions;
+using Hubtel.Api.Utils.Pagination;
 using HubtelWallets.API.DTOs;
 
 namespace Hubtel.Api.Services;
@@ -54,5 +55,19 @@ public class WalletService(WalletContext context, ILogger<WalletService> logger,
 
         return WalletResponseDto.ToWalletDto(wallet);
         
+    }
+    
+    public async Task<PaginationInfo<WalletResponseDto>> GetWalletsAsync()
+    {
+        var query = _context.Wallets.Select(w => WalletResponseDto.ToWalletDto(w));
+
+        var pagedResponse = await PagedList<WalletResponseDto>.ToPageableAsync(query, 1, 10);
+
+        return new PaginationInfo<WalletResponseDto>
+        {
+            Data = pagedResponse,
+            Meta = pagedResponse.Meta
+        };
+
     }
 }

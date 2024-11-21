@@ -6,7 +6,8 @@ namespace Hubtel.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class WalletController(IWalletService walletService, IWalletValidationService walletValidationService): ControllerBase
+public class WalletController(IWalletService walletService, IWalletValidationService walletValidationService)
+    : ControllerBase
 {
     [HttpPost]
     public async Task<IActionResult> AddWalletAsync([FromBody] WalletDto walletDto)
@@ -21,6 +22,7 @@ public class WalletController(IWalletService walletService, IWalletValidationSer
         {
             return BadRequest("The owner has reached the maximum number of wallets (5).");
         }
+
         try
         {
 
@@ -33,4 +35,19 @@ public class WalletController(IWalletService walletService, IWalletValidationSer
             return BadRequest(ex.Message);
         }
     }
+
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetWalletById(Guid id)
+    {
+        if (id == Guid.Empty) return BadRequest("Invalid wallet id provided.");
+
+        var wallet = await walletService.GetWalletAsync(id);
+
+        return wallet switch
+        {
+            null => NotFound(),
+            _ => Ok(wallet)
+        };
+    }
+
 }

@@ -70,4 +70,20 @@ public class WalletService(WalletContext context, ILogger<WalletService> logger,
         };
 
     }
+    
+    public async Task<bool> RemoveWalletAsync(Guid id)
+    {
+        var wallet = await _context.Wallets.FindAsync(id);
+        if (wallet is null)
+        {
+            _logger.LogWarning("Wallet not found: {WalletId}", id);
+            return false;
+        }
+
+        _context.Wallets.Remove(wallet);
+        await _context.SaveChangesAsync();
+
+        _logger.LogInformation("Wallet removed successfully: {WalletId}", id);
+        return true;
+    }
 }

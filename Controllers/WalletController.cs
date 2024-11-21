@@ -56,5 +56,19 @@ public class WalletController(IWalletService walletService, IWalletValidationSer
         var result = await walletService.GetWalletsAsync();
         return Ok(result);
     }
+    
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteWallet(Guid id)
+    {
+        if (id == Guid.Empty) return BadRequest("Invalid wallet id provided.");
+
+        var wallet = await walletService.GetWalletAsync(id);
+
+        if (wallet is null) return NotFound();
+
+        await walletService.RemoveWalletAsync(id);
+
+        return NoContent();
+    }
 
 }

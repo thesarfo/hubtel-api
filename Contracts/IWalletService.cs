@@ -9,5 +9,7 @@ public interface IWalletService
     Task<WalletResponseDto> AddWalletAsync(WalletDto wallet);
     Task<WalletResponseDto> GetWalletAsync(Guid id);
     Task<PaginationInfo<WalletResponseDto>> GetWalletsAsync();
+    Task<bool> RemoveWalletAsync(Guid id);
+
 
 }

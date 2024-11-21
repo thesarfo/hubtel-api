@@ -2,9 +2,9 @@ namespace Hubtel.Api.Data.Enums;
 
 public enum AccountScheme
 {
-    visa = 1,
+    visa,
     mastercard,
-    mtn,
     vodafone,
+    mtn,
     airteltigo
 }

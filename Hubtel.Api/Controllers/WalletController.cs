@@ -10,6 +10,7 @@ namespace Hubtel.Api.Controllers;
 public class WalletController(IWalletService walletService, IWalletValidationService walletValidationService)
     : ControllerBase
 {
+    
     /// <summary>
     /// Adds a new wallet.
     /// </summary>
@@ -42,10 +43,11 @@ public class WalletController(IWalletService walletService, IWalletValidationSer
             return BadRequest(ApiResponse<object>.Failure(ex.Message));
         }
     }
-
+    
     /// <summary>
-    /// Gets all wallets.
+    /// Gets a single wallet by id.
     /// </summary>
+    /// <param name="id"></param>
     /// <returns></returns>
     [HttpGet("{id}")]
     public async Task<IActionResult> GetWalletById(Guid id)
@@ -63,11 +65,10 @@ public class WalletController(IWalletService walletService, IWalletValidationSer
             _ => Ok(ApiResponse<object>.Success(wallet, MessageConstants.WalletRetrievedSuccessfully))
         };
     }
-
+    
     /// <summary>
-    /// Gets a single wallet by id.
+    /// Gets all wallets.
     /// </summary>
-    /// <param name="id"></param>
     /// <returns></returns>
     [HttpGet]
     public async Task<IActionResult> GetWalletsAsync([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)

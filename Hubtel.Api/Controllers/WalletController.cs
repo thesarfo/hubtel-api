@@ -10,45 +10,42 @@ namespace Hubtel.Api.Controllers;
 public class WalletController(IWalletService walletService, IWalletValidationService walletValidationService)
     : ControllerBase
 {
-    
     /// <summary>
     /// Adds a new wallet.
     /// </summary>
-    /// <param name="walletRequestDto"></param>
-    /// <returns></returns>
+    /// <param name="walletRequestDto">The wallet request details</param>
+    /// <returns>Created wallet details or error response</returns>
     [HttpPost]
     public async Task<IActionResult> AddWalletAsync([FromBody] WalletRequestDto walletRequestDto)
     {
-        if (walletRequestDto is null) return BadRequest(ModelState);
-        if (!await walletValidationService.IsAccountNumberUniqueAsync(walletRequestDto.AccountNumber, walletRequestDto.Owner))
+        if (walletRequestDto is null) 
+            return BadRequest(ApiResponse<object>.Failure(MessageConstants.InvalidRequest));
+        if (!await walletValidationService.IsAccountNumberUniqueAsync(
+                walletRequestDto.AccountNumber, 
+                walletRequestDto.Owner))
         {
-            
             return BadRequest(ApiResponse<object>.Failure(MessageConstants.AccountInUse));
         }
+
         if (!await walletValidationService.CanAddMoreWalletsAsync(walletRequestDto.Owner))
         {
             return BadRequest(ApiResponse<object>.Failure(MessageConstants.MaxWalletsReached));
         }
+        var result = await walletService.AddWalletAsync(walletRequestDto);
 
-        try
-        {
-
-            var result = await walletService.AddWalletAsync(walletRequestDto);
-            return CreatedAtAction(nameof(GetWalletById), new { id = result.Id }, 
-                ApiResponse<WalletResponseDto>.Success(result, MessageConstants.WalletAddedSuccessfully));
-        }
-        catch (ArgumentException ex)
-        {
-
-            return BadRequest(ApiResponse<object>.Failure(ex.Message));
-        }
+        return result.Content is not null
+            ? CreatedAtAction(
+                nameof(GetWalletById), 
+                new { id = result.Content.Id }, 
+                result)
+            : BadRequest(result);
     }
     
     /// <summary>
-    /// Gets a single wallet by id.
+    /// Retrieves a single wallet by its unique identifier.
     /// </summary>
-    /// <param name="id"></param>
-    /// <returns></returns>
+    /// <param name="id">The unique identifier of the wallet</param>
+    /// <returns>Wallet details or error response</returns>
     [HttpGet("{id}")]
     public async Task<IActionResult> GetWalletById(Guid id)
     {
@@ -56,46 +53,49 @@ public class WalletController(IWalletService walletService, IWalletValidationSer
         {
             return BadRequest(ApiResponse<object>.Failure(MessageConstants.InvalidWalletId));
         }
+        var result = await walletService.GetWalletAsync(id);
 
-        var wallet = await walletService.GetWalletAsync(id);
-
-        return wallet switch
-        {
-            null => NotFound(ApiResponse<object>.Failure(MessageConstants.WalletNotFound)),
-            _ => Ok(ApiResponse<object>.Success(wallet, MessageConstants.WalletRetrievedSuccessfully))
-        };
+        return result.Content is null 
+            ? NotFound(result) 
+            : Ok(result);
     }
     
     /// <summary>
-    /// Gets all wallets.
+    /// Retrieves paginated list of wallets.
     /// </summary>
-    /// <returns></returns>
+    /// <param name="pageNumber">Page number for pagination</param>
+    /// <param name="pageSize">Number of items per page</param>
+    /// <returns>Paginated wallet list or error response</returns>
     [HttpGet]
-    public async Task<IActionResult> GetWalletsAsync([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
+    public async Task<IActionResult> GetWalletsAsync(
+        [FromQuery] int pageNumber = 1, 
+        [FromQuery] int pageSize = 10)
     {
         if (pageNumber <= 0 || pageSize <= 0)
         {
-            return BadRequest(ApiResponse<object>.Failure(MessageConstants.InvalidPaginationParameters));
+            return BadRequest(ApiResponse<object>.Failure(
+                MessageConstants.InvalidPaginationParameters));
         }
 
         var result = await walletService.GetWalletsAsync(pageNumber, pageSize);
+        
         return Ok(result);
     }
 
-    
     /// <summary>
-    /// Removes a wallet by id.
+    /// Removes a wallet by its unique identifier.
     /// </summary>
-    /// <param name="id"></param>
-    /// <returns></returns>
+    /// <param name="id">The unique identifier of the wallet to remove</param>
+    /// <returns>No content or error response</returns>
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteWallet(Guid id)
     {
-        if (id == Guid.Empty) return BadRequest(ApiResponse<object>.Failure(MessageConstants.InvalidWalletId));
-        
-        await walletService.RemoveWalletAsync(id);
+        if (id == Guid.Empty) 
+            return BadRequest(ApiResponse<object>.Failure(MessageConstants.InvalidWalletId));
+        var result = await walletService.RemoveWalletAsync(id);
 
-        return NoContent();
+        return result.Content 
+            ? NoContent() 
+            : BadRequest(result);
     }
-
 }

@@ -9,7 +9,7 @@ using Hubtel.Api.Utils.Pagination;
 
 namespace Hubtel.Api.Services
 {
-    public class WalletService : IWalletService
+     public class WalletService : IWalletService
     {
         private readonly WalletContext _context;
         private readonly ILogger<WalletService> _logger;
@@ -22,7 +22,7 @@ namespace Hubtel.Api.Services
             _walletValidationService = walletValidationService ?? throw new ArgumentNullException(nameof(walletValidationService));
         }
 
-        public async Task<WalletResponseDto> AddWalletAsync(WalletRequestDto walletRequestDto)
+        public async Task<ApiResponse<WalletResponseDto>> AddWalletAsync(WalletRequestDto walletRequestDto)
         {
             try
             {
@@ -46,21 +46,24 @@ namespace Hubtel.Api.Services
 
                 _logger.LogInformation("Wallet added successfully: {WalletId}", wallet.Id);
 
-                return WalletResponseDto.ToWalletDto(wallet);
+                return ApiResponse<WalletResponseDto>.Success(
+                    WalletResponseDto.ToWalletDto(wallet),
+                    MessageConstants.WalletAddedSuccessfully
+                );
             }
             catch (ArgumentNullException ex)
             {
                 _logger.LogError(ex, "ArgumentNullException while adding wallet.");
-                throw; 
+                return ApiResponse<WalletResponseDto>.Failure(ex.Message);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An unexpected error occurred while adding the wallet.");
-                throw new InvalidOperationException(MessageConstants.UnexpectedError, ex);
+                return ApiResponse<WalletResponseDto>.Failure(MessageConstants.UnexpectedError);
             }
         }
 
-        public async Task<WalletResponseDto> GetWalletAsync(Guid id)
+        public async Task<ApiResponse<WalletResponseDto>> GetWalletAsync(Guid id)
         {
             try
             {
@@ -68,16 +71,19 @@ namespace Hubtel.Api.Services
 
                 if (wallet != null)
                 {
-                    return WalletResponseDto.ToWalletDto(wallet);
+                    return ApiResponse<WalletResponseDto>.Success(
+                        WalletResponseDto.ToWalletDto(wallet),
+                        MessageConstants.WalletRetrievedSuccessfully
+                    );
                 }
 
                 _logger.LogWarning("Wallet not found: {WalletId}", id);
-                return null;
+                return ApiResponse<WalletResponseDto>.Failure(MessageConstants.WalletNotFound);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred while retrieving the wallet with ID: {WalletId}", id);
-                throw new InvalidOperationException(MessageConstants.ErrorRetrievingWallets, ex);
+                return ApiResponse<WalletResponseDto>.Failure(MessageConstants.ErrorRetrievingWallets);
             }
         }
 
@@ -103,11 +109,11 @@ namespace Hubtel.Api.Services
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred while retrieving wallets.");
-                throw new InvalidOperationException(MessageConstants.ErrorRetrievingWallets, ex);
+                return ApiResponse<PaginationInfo<WalletResponseDto>>.Failure(MessageConstants.ErrorRetrievingWallets);
             }
         }
 
-        public async Task<bool> RemoveWalletAsync(Guid id)
+        public async Task<ApiResponse<bool>> RemoveWalletAsync(Guid id)
         {
             try
             {
@@ -115,19 +121,19 @@ namespace Hubtel.Api.Services
                 if (wallet is null)
                 {
                     _logger.LogWarning("Wallet not found: {WalletId}", id);
-                    return false;
+                    return ApiResponse<bool>.Failure(MessageConstants.WalletNotFound);
                 }
 
                 _context.Wallets.Remove(wallet);
                 await _context.SaveChangesAsync();
 
                 _logger.LogInformation("Wallet removed successfully: {WalletId}", id);
-                return true;
+                return ApiResponse<bool>.Success(true, MessageConstants.WalletRemovedSuccessfully);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred while removing the wallet with ID: {WalletId}", id);
-                throw new InvalidOperationException(MessageConstants.ErrorRemovingWallets, ex);
+                return ApiResponse<bool>.Failure(MessageConstants.ErrorRemovingWallets);
             }
         }
     }

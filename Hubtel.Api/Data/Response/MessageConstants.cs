@@ -5,6 +5,7 @@ public static class MessageConstants
     public const string WalletAddedSuccessfully = "Wallet added successfully.";
     public const string WalletRetrievedSuccessfully = "Wallet retrieved successfully.";
     public const string WalletsRetrievedSuccessfully = "Wallets retrieved successfully.";
+    public const string WalletRemovedSuccessfully = "Wallet removed successfully.";
     
     public const string WalletNameRequired = "The Name field is required and cannot be empty.";
     public const string WalletNameLength = "The Name must be between 3 and 30 characters.";
@@ -25,4 +26,5 @@ public static class MessageConstants
     public const string ErrorRetrievingWallets = "An error occurred while retrieving the wallet(s).";
     public const string ErrorRemovingWallets = "An error occurred while removing the wallet.";
     public const string UnexpectedError = "An unexpected error occurred while adding the wallet.";
+    public const string InvalidRequest = "Invalid request";
 }

@@ -6,10 +6,10 @@ namespace Hubtel.Api.Contracts;
 
 public interface IWalletService
 {
-    Task<WalletResponseDto> AddWalletAsync(WalletRequestDto walletRequest);
-    Task<WalletResponseDto> GetWalletAsync(Guid id);
-    Task<ApiResponse<PaginationInfo<WalletResponseDto>>> GetWalletsAsync(int pageNumber, int pageSize);
-    Task<bool> RemoveWalletAsync(Guid id);
+    Task<ApiResponse<WalletResponseDto>> AddWalletAsync(WalletRequestDto walletRequestDto);
+    Task<ApiResponse<WalletResponseDto>> GetWalletAsync(Guid id);
+    Task<ApiResponse<PaginationInfo<WalletResponseDto>>> GetWalletsAsync(int pageNumber = 1, int pageSize = 10);
+    Task<ApiResponse<bool>> RemoveWalletAsync(Guid id);
 
 
 }

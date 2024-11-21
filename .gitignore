@@ -1,3 +1,6 @@
 .idea/
 obj/
 bin
+Hubtel.Api/Hubtel.db
+Hubtel.Api/Hubtel.Api.http
+Hubtel.db

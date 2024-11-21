@@ -6,13 +6,20 @@ using Hubtel.Api.Utils.Exceptions;
 var builder = WebApplication.CreateBuilder(args);
 var connString = builder.Configuration.GetConnectionString("Hubtel");
 
-
-builder.Services.AddControllers();
+builder.Services.AddControllers(options =>
+    {
+        options.Filters.Add<ValidationErrorFilter>();
+        options.SuppressImplicitRequiredAttributeForNonNullableReferenceTypes = true; 
+    })
+    .ConfigureApiBehaviorOptions(options =>
+    {
+        options.SuppressModelStateInvalidFilter = true; 
+    });
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddSqlite<WalletContext>(connString);
-builder.Services.AddProblemDetails();
+
 builder.Services.AddScoped<IWalletService, WalletService>();
 builder.Services.AddScoped<IWalletValidationService, WalletValidationService>();
 

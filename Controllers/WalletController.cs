@@ -14,21 +14,21 @@ public class WalletController(IWalletService walletService, IWalletValidationSer
     public async Task<IActionResult> AddWalletAsync([FromBody] WalletDto walletDto)
     {
         if (walletDto is null) return BadRequest(ModelState);
-        if (!await walletValidationService.IsAccountNumberUniqueAsync(walletDto.AccountNumber))
+        if (!await walletValidationService.IsAccountNumberUniqueAsync(walletDto.AccountNumber, walletDto.Owner))
         {
             
-            return BadRequest(ApiResponse<object>.Failure("The account number is already in use"));
+            return BadRequest(ApiResponse<object>.Failure(MessageConstants.AccountInUse));
         }
         if (!await walletValidationService.CanAddMoreWalletsAsync(walletDto.Owner))
         {
-            return BadRequest(ApiResponse<object>.Failure("The owner has reached the maximum number of wallets (5)"));
+            return BadRequest(ApiResponse<object>.Failure(MessageConstants.MaxWalletsReached));
         }
 
         try
         {
 
             var result = await walletService.AddWalletAsync(walletDto);
-            return Ok(ApiResponse<WalletResponseDto>.Success(result, "Wallet Added Successfully"));
+            return Ok(ApiResponse<WalletResponseDto>.Success(result, MessageConstants.WalletAddedSuccessfully));
         }
         catch (ArgumentException ex)
         {
@@ -42,15 +42,15 @@ public class WalletController(IWalletService walletService, IWalletValidationSer
     {
         if (id == Guid.Empty)
         {
-            return BadRequest(ApiResponse<object>.Failure("Invalid wallet ID provided"));
+            return BadRequest(ApiResponse<object>.Failure(MessageConstants.InvalidWalletId));
         }
 
         var wallet = await walletService.GetWalletAsync(id);
 
         return wallet switch
         {
-            null => NotFound(ApiResponse<object>.Failure("Wallet not found")),
-            _ => Ok(ApiResponse<object>.Success(wallet, "Wallet retrieved successfully"))
+            null => NotFound(ApiResponse<object>.Failure(MessageConstants.WalletNotFound)),
+            _ => Ok(ApiResponse<object>.Success(wallet, MessageConstants.WalletRetrievedSuccessfully))
         };
     }
 
@@ -60,7 +60,7 @@ public class WalletController(IWalletService walletService, IWalletValidationSer
     {
         if (pageNumber <= 0 || pageSize <= 0)
         {
-            return BadRequest(ApiResponse<object>.Failure("Invalid pagination parameters."));
+            return BadRequest(ApiResponse<object>.Failure(MessageConstants.InvalidPaginationParameters));
         }
 
         var result = await walletService.GetWalletsAsync(pageNumber, pageSize);
@@ -71,7 +71,7 @@ public class WalletController(IWalletService walletService, IWalletValidationSer
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteWallet(Guid id)
     {
-        if (id == Guid.Empty) return BadRequest(ApiResponse<object>.Failure("Invalid wallet id provided"));
+        if (id == Guid.Empty) return BadRequest(ApiResponse<object>.Failure(MessageConstants.InvalidWalletId));
         
         await walletService.RemoveWalletAsync(id);
 

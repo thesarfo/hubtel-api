@@ -65,7 +65,7 @@ public class WalletService(WalletContext context, ILogger<WalletService> logger,
                 Data = pagedResponse,
                 Meta = pagedResponse.Meta
             },
-            "Wallets retrieved successfully"
+            MessageConstants.WalletsRetrievedSuccessfully
         );
     }
 

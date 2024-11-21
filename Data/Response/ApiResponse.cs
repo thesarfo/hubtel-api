@@ -15,11 +15,11 @@ public class ApiResponse<T>
         };
     }
 
-    public static ApiResponse<T> Failure(string errorMessage)
+    public static ApiResponse<T> Failure(string errorMessage, T? content = default)
     {
         return new ApiResponse<T>
         {
-            Content = default,  
+            Content = content,  
             Message = errorMessage  
         };
     }

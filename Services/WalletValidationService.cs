@@ -1,6 +1,7 @@
 using Hubtel.Api.Contracts;
 using Hubtel.Api.Data;
 using Hubtel.Api.Data.Enums;
+using Hubtel.Api.Data.Response;
 using Hubtel.Api.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -18,7 +19,7 @@ public class WalletValidationService(WalletContext context) : IWalletValidationS
     }
 
 
-    public async Task<bool> IsAccountNumberUniqueAsync(string accountNumber)
+    public async Task<bool> IsAccountNumberUniqueAsync(string accountNumber, string owner)
     {
         return !await context.Wallets.AnyAsync(w => w.AccountNumber == accountNumber);
     }
@@ -27,7 +28,7 @@ public class WalletValidationService(WalletContext context) : IWalletValidationS
     {
         if (!Enum.IsDefined(typeof(AccountScheme), wallet.AccountScheme))
         {
-            throw new ArgumentException("Invalid account scheme provided.");
+            throw new ArgumentException(MessageConstants.InvalidAccountScheme);
         }
 
         ValidateWalletType(wallet);
@@ -42,7 +43,7 @@ public class WalletValidationService(WalletContext context) : IWalletValidationS
     {
         if (wallet.Type != WalletType.momo && wallet.Type != WalletType.card)
         {
-            throw new ArgumentException("Invalid wallet type. Only 'momo' or 'card' are accepted.");
+            throw new ArgumentException(MessageConstants.InvalidWalletType);
         }
     }
 
@@ -50,7 +51,7 @@ public class WalletValidationService(WalletContext context) : IWalletValidationS
     {
         if (!IsValidCardNumber(wallet.AccountNumber, wallet.AccountScheme))
         {
-            throw new ArgumentException("Invalid card number provided for the specified Account Scheme.");
+            throw new ArgumentException($"{MessageConstants.InvalidCardNumber} Account Scheme: {wallet.AccountScheme}");
         }
 
         wallet.AccountNumber = wallet.AccountNumber.Substring(0, 6);

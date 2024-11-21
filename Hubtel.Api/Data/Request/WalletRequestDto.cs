@@ -1,25 +1,26 @@
 using System.ComponentModel.DataAnnotations;
+using Hubtel.Api.Data.Response;
 using Hubtel.Api.Utils;
-using Hubtel.Api.Utils.Binders;
-using Microsoft.AspNetCore.Mvc;
 
 namespace Hubtel.Api.Data.Request;
 
-public record WalletDto(
-    [ModelBinder(BinderType = typeof(TrimModelBinder))]
-    [Required]
-    [Length(3,30)] string Name,
-    [ModelBinder(BinderType = typeof(TrimModelBinder))]
-    [Required]
-    [AccountNumber("Type","AccountScheme")]
+
+
+public record WalletRequestDto(
+    [Required(AllowEmptyStrings = false, ErrorMessage = MessageConstants.WalletNameRequired)]
+    [StringLength(30, MinimumLength = 3, ErrorMessage = MessageConstants.WalletNameLength)]
+    string Name,
+
+    [Required(AllowEmptyStrings = false, ErrorMessage = MessageConstants.AccountNumberRequired)]
+    [AccountNumber("Type", "AccountScheme")]
     string AccountNumber,
-    [ModelBinder(BinderType = typeof(TrimModelBinder))]
-    [Required]
+
+    [Required(AllowEmptyStrings = false, ErrorMessage = MessageConstants.AccountSchemeRequired)]
     string AccountScheme,
-    [ModelBinder(BinderType = typeof(TrimModelBinder))]
-    [Required]
+
+    [Required(AllowEmptyStrings = false, ErrorMessage = MessageConstants.WalletTypeRequired)]
     string Type,
-    [ModelBinder(BinderType = typeof(TrimModelBinder))]
-    [Required]
-    [PhoneNumber]
+
+    [Required(AllowEmptyStrings = false, ErrorMessage = MessageConstants.OwnerRequired)]
+    [Phone(ErrorMessage = MessageConstants.InvalidPhoneNumberFormat)]
     string Owner);

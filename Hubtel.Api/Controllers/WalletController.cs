@@ -14,18 +14,18 @@ public class WalletController(IWalletService walletService, IWalletValidationSer
     /// <summary>
     /// Adds a new wallet.
     /// </summary>
-    /// <param name="walletDto"></param>
+    /// <param name="walletRequestDto"></param>
     /// <returns></returns>
     [HttpPost]
-    public async Task<IActionResult> AddWalletAsync([FromBody] WalletDto walletDto)
+    public async Task<IActionResult> AddWalletAsync([FromBody] WalletRequestDto walletRequestDto)
     {
-        if (walletDto is null) return BadRequest(ModelState);
-        if (!await walletValidationService.IsAccountNumberUniqueAsync(walletDto.AccountNumber, walletDto.Owner))
+        if (walletRequestDto is null) return BadRequest(ModelState);
+        if (!await walletValidationService.IsAccountNumberUniqueAsync(walletRequestDto.AccountNumber, walletRequestDto.Owner))
         {
             
             return BadRequest(ApiResponse<object>.Failure(MessageConstants.AccountInUse));
         }
-        if (!await walletValidationService.CanAddMoreWalletsAsync(walletDto.Owner))
+        if (!await walletValidationService.CanAddMoreWalletsAsync(walletRequestDto.Owner))
         {
             return BadRequest(ApiResponse<object>.Failure(MessageConstants.MaxWalletsReached));
         }
@@ -33,7 +33,7 @@ public class WalletController(IWalletService walletService, IWalletValidationSer
         try
         {
 
-            var result = await walletService.AddWalletAsync(walletDto);
+            var result = await walletService.AddWalletAsync(walletRequestDto);
             return CreatedAtAction(nameof(GetWalletById), new { id = result.Id }, 
                 ApiResponse<WalletResponseDto>.Success(result, MessageConstants.WalletAddedSuccessfully));
         }

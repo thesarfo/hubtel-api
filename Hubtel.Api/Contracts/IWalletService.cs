@@ -6,7 +6,7 @@ namespace Hubtel.Api.Contracts;
 
 public interface IWalletService
 {
-    Task<WalletResponseDto> AddWalletAsync(WalletDto wallet);
+    Task<WalletResponseDto> AddWalletAsync(WalletRequestDto walletRequest);
     Task<WalletResponseDto> GetWalletAsync(Guid id);
     Task<ApiResponse<PaginationInfo<WalletResponseDto>>> GetWalletsAsync(int pageNumber, int pageSize);
     Task<bool> RemoveWalletAsync(Guid id);

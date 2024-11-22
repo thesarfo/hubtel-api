@@ -59,7 +59,7 @@ public class WalletValidationService(WalletContext context) : IWalletValidationS
 
     
 
-    internal bool IsValidCardNumber(string cardNumber, AccountScheme accountScheme)
+    public bool IsValidCardNumber(string cardNumber, AccountScheme accountScheme)
     {
         cardNumber = new string(cardNumber.Where(char.IsDigit).ToArray());
 

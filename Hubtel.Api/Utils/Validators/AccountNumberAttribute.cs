@@ -1,11 +1,20 @@
-namespace Hubtel.Api.Utils;
-
 using System.ComponentModel.DataAnnotations;
 using System.Text.RegularExpressions;
 
+namespace Hubtel.Api.Utils.Validators;
 
+/// <summary>
+/// Custom validation attribute for validating account numbers based on the type (e.g., momo, card)
+/// and account scheme (e.g., mtn, visa).
+/// </summary>
 public class AccountNumberAttribute(string typePropertyName, string schemePropertyName) : ValidationAttribute
 {
+    /// <summary>
+    /// Validates the account number based on the type and scheme specified.
+    /// </summary>
+    /// <param name="value">The value of the account number to validate.</param>
+    /// <param name="validationContext">The context in which the validation is being performed.</param>
+    /// <returns>A <see cref="ValidationResult"/> indicating whether the validation passed or failed.</returns>
     protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)
     {
         var typeProperty = validationContext.ObjectType.GetProperty(typePropertyName);

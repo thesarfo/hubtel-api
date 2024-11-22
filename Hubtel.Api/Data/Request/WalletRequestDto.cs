@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using Hubtel.Api.Data.Response;
-using Hubtel.Api.Utils;
+using Hubtel.Api.Utils.Validators;
 
 namespace Hubtel.Api.Data.Request;
 

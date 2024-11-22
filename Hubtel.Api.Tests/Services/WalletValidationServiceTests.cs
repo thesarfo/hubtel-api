@@ -33,7 +33,7 @@ namespace Hubtel.Api.Tests.Services
         [Fact]
         public async Task CanAddMoreWalletsAsync_ShouldReturnTrue_WhenUserHasLessThanFiveWallets()
         {
-            var phoneNumber = "1234567890";
+            var phoneNumber = "0244123456";
             var wallets = new List<Wallet>
             {
                 new() { Owner = phoneNumber },
@@ -51,7 +51,7 @@ namespace Hubtel.Api.Tests.Services
         [Fact]
         public async Task CanAddMoreWalletsAsync_ShouldReturnFalse_WhenUserHasFiveWallets()
         {
-            var phoneNumber = "1234567890";
+            var phoneNumber = "0244123456";
             var wallets = Enumerable.Range(1, 5).Select(_ => new Wallet { Owner = phoneNumber });
             await _context.Wallets.AddRangeAsync(wallets);
             await _context.SaveChangesAsync();
@@ -68,8 +68,8 @@ namespace Hubtel.Api.Tests.Services
         [Fact]
         public async Task IsAccountNumberUniqueAsync_ShouldReturnTrue_WhenAccountNumberDoesNotExist()
         {
-            var accountNumber = "1234567890";
-            var owner = "test@test.com";
+            var accountNumber = "0244123456";
+            var owner = "0244123456";
 
             var result = await _sut.IsAccountNumberUniqueAsync(accountNumber, owner);
 
@@ -79,8 +79,8 @@ namespace Hubtel.Api.Tests.Services
         [Fact]
         public async Task IsAccountNumberUniqueAsync_ShouldReturnFalse_WhenAccountNumberExists()
         {
-            var accountNumber = "1234567890";
-            var owner = "test@test.com";
+            var accountNumber = "0244123456";
+            var owner = "0244123456";
             var wallet = new Wallet { AccountNumber = accountNumber, Owner = owner };
             await _context.Wallets.AddAsync(wallet);
             await _context.SaveChangesAsync();
@@ -172,12 +172,12 @@ namespace Hubtel.Api.Tests.Services
             {
                 AccountScheme = AccountScheme.mtn,
                 Type = WalletType.momo,
-                AccountNumber = "1234567890"
+                AccountNumber = "0244123456"
             };
 
             _sut.ValidateWallet(wallet);
 
-            wallet.AccountNumber.Should().Be("1234567890");
+            wallet.AccountNumber.Should().Be("0244123456");
         }
 
         #endregion

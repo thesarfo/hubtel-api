@@ -1,0 +1,109 @@
+{
+	"info": {
+		"_postman_id": "06536d03-ee11-4ce0-bf46-33814ed3b2c2",
+		"name": "Hubtel API",
+		"description": "An API enabling users to manage their Hubtel Wallets",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "29096674"
+	},
+	"item": [
+		{
+			"name": "Get All Wallets",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/api/v1/wallet",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"wallet"
+					]
+				},
+				"description": "Retrieves all wallets in the Hubtel system."
+			},
+			"response": []
+		},
+		{
+			"name": "Create Wallet",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"name\": \"First\",\n  \"accountNumber\": \"0548238934\",\n  \"accountScheme\": \"mtn\",\n  \"type\": \"momo\",\n  \"owner\": \"0545661312\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/api/v1/wallet",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"wallet"
+					]
+				},
+				"description": "Creates a new wallet using the provided details in the request body. It requires information such as the wallet's name, account number, account scheme (e.g., \"mtn\"), wallet type (e.g., \"momo\"), and the owner's phone number."
+			},
+			"response": []
+		},
+		{
+			"name": "Get Wallet By Id",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/api/v1/wallet/160a6260-07a9-4e3d-bb8b-18da3afe61bc",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"wallet",
+						"160a6260-07a9-4e3d-bb8b-18da3afe61bc"
+					]
+				},
+				"description": "Retrieves a wallet by its unique ID. If the wallet is found, it returns the wallet details, otherwise a `404 Not Found` response is returned."
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Wallet",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/api/v1/wallet/160a6260-07a9-4e3d-bb8b-18da3afe61bc",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"wallet",
+						"160a6260-07a9-4e3d-bb8b-18da3afe61bc"
+					]
+				},
+				"description": "Deletes a wallet by its unique ID"
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "",
+			"type": "default"
+		}
+	]
+}
